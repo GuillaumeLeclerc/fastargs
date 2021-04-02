@@ -1,4 +1,5 @@
 import unittest
+import io
 
 from fastargs import Config, set_current_config, get_current_config, Section, Param
 from fastargs.validation import Anything
@@ -90,6 +91,28 @@ class TestStringMethods(unittest.TestCase):
         cfg = get_current_config().collect({'first.sec.param': 43})
         args = cfg.get()
         self.assertEqual(args.first.sec.param, 43)
+
+    def test_summary(self):
+        Section('first.sec', 'test_sec1').params(
+            param1=Param(Anything(), required=True),
+            param2=Param(Anything(), default="3"),
+            param3=Param(Anything(), required=False)
+        )
+
+        stream = io.StringIO()
+
+        cfg = get_current_config().collect({
+            'first.sec.param1': 42
+        })
+
+        cfg.summary(stream)
+        output = stream.getvalue()
+
+        self.assertIn('first.sec.param1', output)
+        self.assertIn('42', output)
+        self.assertIn('first.sec.param2', output)
+        self.assertIn('3', output)
+        self.assertNotIn('first.sec.param3', output)
 
 
 if __name__ == '__main__':

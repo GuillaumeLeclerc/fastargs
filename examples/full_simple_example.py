@@ -24,6 +24,8 @@ config.collect_argparse_args(parser)
 # This will generate a nice table with potential missing arguments
 config.validate(mode='stderr')
 
+config.summary()
+
 
 @param('module1.params.a')
 @param('module1.params.b')

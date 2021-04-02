@@ -176,3 +176,19 @@ or from CLI arguments. For CLI just use:
 
         elif mode == 'errordict':
             return errors
+
+    def summary(self, target=sys.stderr):
+        table = [['Parameter', 'Value']]
+
+        for path in self.entries.keys():
+            try:
+                value = self[path]
+                if value is not None:
+                    table.append(['.'.join(path), self[path]])
+            except:
+                pass
+
+        print(SingleTable(table, ' Arguments defined').table, file=target)
+
+        return self
+
