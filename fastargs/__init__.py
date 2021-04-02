@@ -13,4 +13,4 @@ from .state import get_current_config, set_current_config
 from . import validation
 from . import decorators
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
