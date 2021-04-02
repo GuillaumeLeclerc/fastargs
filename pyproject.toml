@@ -1,0 +1,12 @@
+[build-system]
+requires = ["flit_core >=2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "fastargs"
+author = "Guillaume Leclerc"
+author-email = "leclerc@mit.edu"
+home-page = "https://github.com/GuillaumeLeclerc/fastargs"
+classifiers = [ "License :: OSI Approved :: MIT License",]
+description-file = "README.md"
+requires = ["terminaltables", "pyyaml"]
