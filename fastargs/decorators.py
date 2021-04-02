@@ -4,20 +4,25 @@ class WrappedFunction:
 
     def __init__(self, func):
         self.func = func
-        self.ns = tuple()
         self.arg_paths = []
 
     def add_arg(self, arg):
-        self.arg_paths.append(arg)
+        self.arg_paths.append([None, arg])
 
     def set_section(self, section):
-        self.ns = section
+        for i in reversed(range(len(self.arg_paths))):
+            current_ns, path = self.arg_paths[i]
+            if current_ns is None:
+                self.arg_paths[i][0] = section
+            else:
+                break
 
     def __call__(self, *args, **kwargs):
         config = get_current_config()
         filled_args = {}
-        for path in self.arg_paths:
-            path = self.ns + path
+        for ns, path in self.arg_paths:
+            if ns is not None:
+                path = ns + path
             value = config[path]
             if value is not None:
                 filled_args[path[-1]] = value
@@ -25,13 +30,12 @@ class WrappedFunction:
         filled_args.update(kwargs)
 
         try:
-            self.func(*args, **filled_args)
+            return self.func(*args, **filled_args)
         except TypeError as e:
             if 'multiple values for argument' in e.args[0]:
                 raise TypeError("""Ambiguity overriding config arguments, use \
 named parameter to resolve it""") from None
             else:
-                print("Not this")
                 raise e
 
 
