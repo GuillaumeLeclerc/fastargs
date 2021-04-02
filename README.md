@@ -37,7 +37,7 @@ Section("data.loading", "Optimizer parameters").params(
   num_workers=Param(And(int, InRange(min=0)), default=0)
 )
 
-# The training code (see later sections on how to read the params)
+# Data loading code
 ```
 
 ### Populate the arguments
