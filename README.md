@@ -8,8 +8,8 @@ The goal of this library is to enable easy configuration of large code bases wit
 
 ### Install
 
-1. Github: `pip install git+https://github.com/GuillaumeLeclerc/fastargs.git `
-2. PIP (available soon): `pip install fastargs`
+1. PIP: `pip install fastargs`
+2. Github: `pip install git+https://github.com/GuillaumeLeclerc/fastargs.git `
 
 ### Declare the arguments
 
