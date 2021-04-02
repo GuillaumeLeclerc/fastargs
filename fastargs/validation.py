@@ -81,9 +81,9 @@ class And(Checker):
 
 class InRange(Checker):
 
-    def __init__(self, low, high=float('+inf')):
-        self.low = low
-        self.high = high
+    def __init__(self, min, max=float('+inf')):
+        self.low = min
+        self.high = max
 
     def check(self, value):
         if value < self.low or value > self.high:
