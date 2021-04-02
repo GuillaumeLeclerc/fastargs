@@ -11,6 +11,9 @@ The goal of this library is to enable easy configuration of large code bases wit
 1. PIP: `pip install fastargs`
 2. Github: `pip install git+https://github.com/GuillaumeLeclerc/fastargs.git `
 
+### Example
+Simple full example available: https://github.com/GuillaumeLeclerc/fastargs/blob/main/examples/full_simple_example.py
+
 ### Declare the arguments
 
 As demonstrated here you can declare your parameters in multiple files over your project. To make your code more readable it is recommended to declare the parameters as close as from where they are used.
