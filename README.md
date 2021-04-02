@@ -131,6 +131,16 @@ config.validate(mode='stderr')
 
 ```
 
+### Summary of parameters
+
+You can produce a summary of the arguments defined:
+
+```python
+config.summary() 
+# by default it will be written to stderr but you can change that by passing a file
+# to the function
+```
+
 ### Accessing arguments
 
 #### Option 1: Explicitely
