@@ -21,8 +21,8 @@ from fastargs import Section, Param
 from fastargs.validation import InRange, And
 
 Section("training.optimizer", "Optimizer parameters").params(
-  learning_rate=Param(And(float, InRange(min=0)), required=True),
-  momentum=Param(And(float, InRange(min=0)), default=0)
+  learning_rate=Param(float, required=True),  # One can use simple type declaration
+  momentum=Param(And(float, InRange(min=0)), default=0)  # Or more constrained validation rules
 )
 
 # The training code (see later sections on how to read the params)
