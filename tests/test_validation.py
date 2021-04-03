@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from fastargs import Config, set_current_config, get_current_config, Section, Param
 from fastargs.validation import (Anything, Str, Int, Float, And, Or, InRange,
-                                 Module)
+                                 Module, ImportedObject)
 from fastargs.exceptions import MissingValueError, ValidationError
 
 sys.path.append(path.dirname(path.realpath(__file__)))
@@ -244,6 +244,21 @@ class TestValidation(unittest.TestCase):
 
         self.assertEqual(cfg['imported_section.blah.p1'], 42.5)
         sys.modules.pop('test_module.with_params')
+
+    def test_imported_object(self):
+        Section('module.import').params(
+            obj=Param(ImportedObject(), required=True)
+        )
+
+        cfg = get_current_config().collect({
+            'module.import.obj': 'test_module.file1.testme'
+        })
+
+        loaded_function = cfg['module.import.obj']
+
+        self.assertEqual(loaded_function(), 42)
+        sys.modules.pop('test_module.file1')
+
 
 
 

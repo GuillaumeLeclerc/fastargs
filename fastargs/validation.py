@@ -81,7 +81,6 @@ class And(Checker):
             result = checker.check(result)
         return result
 
-
     def help(self):
         return ' and '.join([x.help() for x in self.checkers])
 
@@ -108,9 +107,23 @@ class Module(Checker):
     def check(self, value):
         return importlib.import_module(value)
 
-
     def help(self):
         return "path to python module"
+
+class ImportedObject(Checker):
+
+    def __init__(self):
+        pass
+
+    def check(self, value):
+        path = value.split('.')
+        module = '.'.join(path[:-1])
+        imported = importlib.import_module(module)
+        return getattr(imported, path[-1])
+
+
+    def help(self):
+        return "path to python module and an object within"
 
 
 DEFAULT_CHECKERS = {
