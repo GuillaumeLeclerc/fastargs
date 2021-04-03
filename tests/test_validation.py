@@ -259,10 +259,27 @@ class TestValidation(unittest.TestCase):
         self.assertEqual(loaded_function(), 42)
         sys.modules.pop('test_module.file1')
 
+    def test_conditional_arguments(self):
+        Section('a').params(
+            value=Param(int)
+        )
 
+        Section('b').enable_if(lambda cfg: cfg['a.value'] >= 0).params(
+            value=Param(int, required=True)
+        )
 
+        Section('c').enable_if(lambda cfg: cfg['a.value'] <= 0).params(
+            value=Param(int, required=True)
+        )
 
+        cfg = get_current_config().collect({
+            'a.value': '19',
+        })
 
+        errors = cfg.validate(mode='errordict')
+
+        self.assertIn(('b', 'value'), errors)
+        self.assertNotIn(('c', 'value'), errors)
 
 if __name__ == '__main__':
     unittest.main()

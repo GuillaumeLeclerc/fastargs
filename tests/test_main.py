@@ -50,7 +50,7 @@ class TestStringMethods(unittest.TestCase):
         args = cfg.get()
         self.assertEqual(args.first.sec.param, "happy")
         self.assertEqual(args.second.sec.param, "sad")
-        self.assertIsNone(args.second.sec.notdef)
+        self.assertNotIn('notdef', vars(args.second.sec))
 
 
     def test_overriden(self):
@@ -113,6 +113,32 @@ class TestStringMethods(unittest.TestCase):
         self.assertIn('first.sec.param2', output)
         self.assertIn('3', output)
         self.assertNotIn('first.sec.param3', output)
+
+    def test_conditional_arguments(self):
+        Section('a').params(
+            value=Param(int)
+        )
+
+        Section('b').enable_if(lambda cfg: cfg['a.value'] >= 0).params(
+            value=Param(int)
+        )
+
+        Section('c').enable_if(lambda cfg: cfg['a.value'] <= 0).params(
+            value=Param(int)
+        )
+
+        cfg = get_current_config().collect({
+            'a.value': '19',
+            'b.value': '18',
+            'c.value': '15'
+        })
+
+        self.assertIsNone(cfg['c.value'])
+        self.assertEqual(cfg['b.value'], 18)
+
+        all_config = vars(cfg.get())
+        self.assertNotIn('d', all_config)
+        self.assertNotIn('c', all_config)
 
 
 if __name__ == '__main__':

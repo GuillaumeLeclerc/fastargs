@@ -70,12 +70,15 @@ or from CLI arguments. For CLI just use:
 --PATH.TO.ARG=value
 
 """
+        previous_epilog = ""
         while True:
             epilog = ""
             table_content = [['Name', 'Default', 'Constraint', 'Description']]
             for sec_path, entries in self.sections_to_entries.items():
                 for path in entries:
                     param = self.entries[path]
+                    if not param.section.is_enabled(self):
+                        continue
                     argname = '.'.join(path)
                     # We do not want to show the args since we have our nice table after
                     try:
@@ -93,8 +96,9 @@ or from CLI arguments. For CLI just use:
             self.collect_argparse_args(parser)
             # If we have more entries in the config we have to regenerate
             # the help with the new settings
-            if len(self.entries) == entry_count:
+            if len(self.entries) == entry_count and epilog == previous_epilog:
                 break
+            previous_epilog = epilog
 
 
         parser.epilog = epilogStart + epilog
@@ -152,6 +156,9 @@ or from CLI arguments. For CLI just use:
         except KeyError:
             raise KeyError(f"{'.'.join(path)} not defined")
 
+        if not param.section.is_enabled(self):
+            return None
+
         try:
             value = self.content[path]
         except KeyError:
@@ -170,7 +177,8 @@ or from CLI arguments. For CLI just use:
         result = rec_dd()
         for path in self.entries.keys():
             value = self[path]
-            recursive_set(result, path, value)
+            if value is not None:
+                recursive_set(result, path, value)
 
         return NestedNamespace(fix_dict(result))
 

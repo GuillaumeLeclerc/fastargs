@@ -7,6 +7,7 @@ class Param:
         self.default = default
         self.desc = desc
         self.required = required
+        self.section = None
 
     def __str__(self):
 

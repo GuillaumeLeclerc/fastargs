@@ -197,6 +197,30 @@ class TestSources(unittest.TestCase):
         self.assertIn('imported_section.blah.p1', parser.epilog)
         sys.modules.pop('test_module.with_params')
 
+    def test_conditional_arguments_properly_hidden(self):
+        Section('a').params(
+            value=Param(int)
+        )
+
+        Section('showsec').enable_if(lambda cfg: cfg['a.value'] >= 0).params(
+            value=Param(int, required=True)
+        )
+
+        Section('hidesec').enable_if(lambda cfg: cfg['a.value'] <= 0).params(
+            value=Param(int, required=True)
+        )
+
+        cfg = get_current_config()
+        parser = argparse.ArgumentParser(description='Test lib')
+
+        with patch('sys.argv', ['pp', '--a.value=17']):
+            cfg.augment_argparse(parser)
+            cfg.collect_argparse_args(parser)
+
+        self.assertIn('showsec', parser.epilog)
+        self.assertNotIn('hidesec', parser.epilog)
+
+
 
 if __name__ == '__main__':
     unittest.main()
