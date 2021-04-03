@@ -191,7 +191,7 @@ We wanted to give the ability to define parameters of type "Module". These argum
 Since imported modules can also define configuration/parameters we make sure to load them and add them to the documentation and let the user define them too
 
 Example (from the tests):
-```
+```python
 Section('module.import').params(
     module=Param(Module(), required=True)
 )
