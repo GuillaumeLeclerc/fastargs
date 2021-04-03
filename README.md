@@ -178,6 +178,38 @@ def train_my_model(model, learning_rate, momentum):
   
 # Note that if one does:
 train_my_model(model, learning_rate=10)
-# the learning from the config will be ignored (but momentum will be since it wasn't explicitely overriden)
+# the learning from the config will be ignored
+# (but momentum will be since it wasn't explicitely overriden)
 
 ```
+### Advanced features
+
+#### Modules as arguments
+
+We wanted to give the ability to define parameters of type "Module". These arguments represent paths to an importable python module (eg. `torch.optim`). The goal is to automatically load code based on the arguments provided by the user and pass the module directly to the code that needs it.
+
+Since imported modules can also define configuration/parameters we make sure to load them and add them to the documentation and let the user define them too
+
+Example (from the tests):
+```
+Section('module.import').params(
+    module=Param(Module(), required=True)
+)
+
+cfg = get_current_config().collect({
+    'module.import.module': 'test_module.with_params',
+     # We assume that this parameter is declared in the module loaded above
+    'imported_section.blah.p1': 42.5
+})
+
+loaded_module = cfg['module.import.module']
+# If test_module.with_params has a function testme it becomes available
+# directly in the content of the configuration object
+loaded_module.testme()
+
+# The parameter declared in the imported module is
+# also loaded.
+print(cfg['imported_section.blah.p1'])  # => 42.5
+```
+
+If we need to get a variable/function/class, we can use the import type `ImportedObject`. In the the case of the previous example, the user would have to pass `test_module.with_params.testme`, and the value in the configuration object would be the function itself and not the whole module.
