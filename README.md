@@ -221,3 +221,28 @@ print(cfg['imported_section.blah.p1'])  # => 42.5
 ```
 
 If we need to get a variable/function/class, we can use the import type `ImportedObject`. In the the case of the previous example, the user would have to pass `test_module.with_params.testme`, and the value in the configuration object would be the function itself and not the whole module.
+
+#### Conditional sections
+
+It is pretty common to have parameters that only makes sense if another parameter is defined and/or has a specific value. For example, in the context of optimization, stochastic gradient descent only has one parameter `learning_rate`. But if we use `Adam` we have extra parameters. In this situation one can do the following:
+
+```python
+Section('optim').params(
+  algorithm=Param(str)
+)
+
+Section('optim.alpha').enable_if(labmda cfg: cfg['optim.algorithm'] == 'Adam').params(
+  'momentum': Param(float, required=True),
+  'alpha': Param(float, default=1.0),
+  'beta': Param(float, default=1.0)
+)
+```
+This way users won't see the option `momentum` until they define `optim.algorithm=Adam` and the momentum will not trigger validation error if not filled if another optimizer is chosen.
+```
+
+## Tests
+
+One can run the tests using:
+```
+python -m unittest discover tests
+```
