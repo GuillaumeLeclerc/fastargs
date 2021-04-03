@@ -180,7 +180,15 @@ def train_my_model(model, learning_rate, momentum):
 train_my_model(model, learning_rate=10)
 # the learning from the config will be ignored
 # (but momentum will be since it wasn't explicitely overriden)
+```
 
+By default the parameter will be passed to the argument with name the last component of the path (eg. `a.b.c` -> `c`). However, it is possible that multiple parameter section share some parameter names. It is therefore possible to explicitely chose the name of the argument:
+
+```python
+@param('a.b.c', 'param1')
+@param('d.e.c', 'param2')
+def compute(param1, param2):
+  pass # ....
 ```
 ### Advanced features
 
