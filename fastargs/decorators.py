@@ -6,12 +6,12 @@ class WrappedFunction:
         self.func = func
         self.arg_paths = []
 
-    def add_arg(self, arg):
-        self.arg_paths.append([None, arg])
+    def add_arg(self, arg, alias):
+        self.arg_paths.append([None, arg, alias])
 
     def set_section(self, section):
         for i in reversed(range(len(self.arg_paths))):
-            current_ns, path = self.arg_paths[i]
+            current_ns, path, alias = self.arg_paths[i]
             if current_ns is None:
                 self.arg_paths[i][0] = section
             else:
@@ -20,12 +20,12 @@ class WrappedFunction:
     def __call__(self, *args, **kwargs):
         config = get_current_config()
         filled_args = {}
-        for ns, path in self.arg_paths:
+        for ns, path, alias in self.arg_paths:
             if ns is not None:
                 path = ns + path
             value = config[path]
             if value is not None:
-                filled_args[path[-1]] = value
+                filled_args[alias] = value
 
         filled_args.update(kwargs)
 
@@ -40,14 +40,17 @@ named parameter to resolve it""") from None
 
 
 
-def param(parameter):
+def param(parameter, alias=None):
     if isinstance(parameter, str):
         parameter = tuple(parameter.split('.'))
+
+    if alias==None:
+        alias = parameter[-1]
 
     def wrapper(func):
         if not isinstance(func, WrappedFunction):
             func = WrappedFunction(func)
-        func.add_arg(parameter)
+        func.add_arg(parameter, alias)
         return func
     return wrapper
 

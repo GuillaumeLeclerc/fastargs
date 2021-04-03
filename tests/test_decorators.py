@@ -104,6 +104,27 @@ class TestDecorators(unittest.TestCase):
 
         self.assertEqual(compute(p2=7), 8)
 
+    def test_aliases(self):
+        Section('sec1').params(
+            p1=Param(int),
+        )
+
+        Section('sec2').params(
+            p1=Param(int),
+        )
+
+        @param('sec1.p1')
+        @param('sec2.p1', 'p2')
+        def compute(p1, p2):
+            return p1 + p2
+
+        get_current_config().collect({
+            'sec1.p1': 42,
+            'sec2.p1': 69
+        })
+
+        self.assertEqual(compute(), 111)
+
 
 if __name__ == '__main__':
     unittest.main()
