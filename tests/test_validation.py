@@ -1,10 +1,15 @@
 import unittest
 import io
+from os import path
+import sys
 from unittest.mock import patch
 
 from fastargs import Config, set_current_config, get_current_config, Section, Param
-from fastargs.validation import Anything, Str, Int, Float, And, Or, InRange
+from fastargs.validation import (Anything, Str, Int, Float, And, Or, InRange,
+                                 Module)
 from fastargs.exceptions import MissingValueError, ValidationError
+
+sys.path.append(path.dirname(path.realpath(__file__)))
 
 class TestValidation(unittest.TestCase):
     def setUp(self):
@@ -211,6 +216,36 @@ class TestValidation(unittest.TestCase):
 
         self.assertEqual(len(printed_data), 0)
         self.assertFalse(data['called'])
+
+    def test_module(self):
+        Section('module.import').params(
+            module=Param(Module(), required=True)
+        )
+
+        cfg = get_current_config().collect({
+            'module.import.module': 'test_module.file1'
+        })
+
+        loaded_module = cfg['module.import.module']
+
+        self.assertEqual(loaded_module.testme(), 42)
+        sys.modules.pop('test_module.file1')
+
+
+    def test_params_in_imported_module(self):
+        Section('module.import').params(
+            module=Param(Module(), required=True)
+        )
+
+        cfg = get_current_config().collect({
+            'module.import.module': 'test_module.with_params',
+            'imported_section.blah.p1': 42.5
+        })
+
+        self.assertEqual(cfg['imported_section.blah.p1'], 42.5)
+        sys.modules.pop('test_module.with_params')
+
+
 
 
 

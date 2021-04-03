@@ -31,13 +31,27 @@ class Config:
 
     def collect(self, config):
         config = fix_dict(expand_keys(config))
-        for path, param in self.entries.items():
-            try:
-                value = recursive_get(config, path)
-                if value is not None:
-                    self.content[path] = value
-            except:
-                pass
+        entries = list(self.entries.items())
+        # We repeat until the list of entries doesn't change
+        while True:
+            for path, param in entries:
+                try:
+                    value = recursive_get(config, path)
+                    if value is not None:
+                        self.content[path] = value
+                        # We try to validate the parameter to trigger an
+                        # import in the case the param contains a module
+                        try:
+                            param.validate(value)
+                        except:
+                            pass
+                except:
+                    pass
+            new_entries = list(self.entries.items())
+            if len(new_entries) == len(entries):
+                break
+            else:
+                entries = new_entries
         return self
 
     def augment_argparse(self, parser):
@@ -46,8 +60,7 @@ class Config:
 
         parser.formatter_class = argparse.RawTextHelpFormatter
 
-
-        epilog = """
+        epilogStart = """
 Arguments:
 ----------
 
@@ -57,22 +70,34 @@ or from CLI arguments. For CLI just use:
 --PATH.TO.ARG=value
 
 """
-        for sec_path, entries in self.sections_to_entries.items():
+        while True:
+            epilog = ""
             table_content = [['Name', 'Default', 'Constraint', 'Description']]
-            for path in entries:
-                param = self.entries[path]
-                argname = '.'.join(path)
-                # We do not want to show the args since we have our nice table after
-                parser.add_argument(f'--{argname}', help=argparse.SUPPRESS)
-                default = param.default
-                if param.required:
-                    default = 'Requried!'
-                table_content.append([argname, default, param.checker.help(), param.desc])
-            section_desc = self.sections[sec_path].desc
-            epilog += SingleTable(table_content, section_desc).table + "\n\n"
+            for sec_path, entries in self.sections_to_entries.items():
+                for path in entries:
+                    param = self.entries[path]
+                    argname = '.'.join(path)
+                    # We do not want to show the args since we have our nice table after
+                    try:
+                        parser.add_argument(f'--{argname}', help=argparse.SUPPRESS)
+                    except argparse.ArgumentError:
+                        pass # We might have tried to add this one already
+                    default = param.default
+                    if param.required:
+                        default = 'Requried!'
+                    table_content.append([argname, default, param.checker.help(), param.desc])
+                section_desc = self.sections[sec_path].desc
+                epilog += SingleTable(table_content, section_desc).table + "\n\n"
+
+            entry_count = len(self.entries)
+            self.collect_argparse_args(parser)
+            # If we have more entries in the config we have to regenerate
+            # the help with the new settings
+            if len(self.entries) == entry_count:
+                break
 
 
-        parser.epilog = epilog
+        parser.epilog = epilogStart + epilog
 
         return self
 

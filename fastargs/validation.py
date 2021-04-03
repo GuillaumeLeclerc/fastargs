@@ -1,8 +1,14 @@
+import importlib
 from abc import ABC, abstractmethod
+
 
 class Checker(ABC):
     @abstractmethod
     def check(self, value):
+        raise NotImplementedError
+
+    @abstractmethod
+    def help(self) -> str:
         raise NotImplementedError
 
 
@@ -93,6 +99,19 @@ class InRange(Checker):
     def help(self):
 
         return f"between {self.low} and {self.high}"
+
+class Module(Checker):
+
+    def __init__(self):
+        pass
+
+    def check(self, value):
+        return importlib.import_module(value)
+
+
+    def help(self):
+        return "path to python module"
+
 
 DEFAULT_CHECKERS = {
     int: Int(),

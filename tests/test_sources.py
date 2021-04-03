@@ -2,14 +2,20 @@ import argparse
 import unittest
 from unittest.mock import patch
 import tempfile
+import sys
+from os import path
 import json
 import os
 
 import yaml
 
-from fastargs import Config, set_current_config, get_current_config, Section, Param
-from fastargs.validation import Anything, Str, Int, Float, And, Or, InRange
+from fastargs import (Config, set_current_config, get_current_config, Section,
+                      Param)
+from fastargs.validation import (Anything, Str, Int, Float, And, Or, InRange,
+                                 Module)
 from fastargs.exceptions import MissingValueError, ValidationError
+
+sys.path.append(path.dirname(path.realpath(__file__)))
 
 class TestSources(unittest.TestCase):
     def setUp(self):
@@ -176,6 +182,20 @@ class TestSources(unittest.TestCase):
         self.assertIn('sec1.test.p1', parser.epilog)
         self.assertIn('mydesc1', parser.epilog)
         self.assertIn('mydesc2', parser.epilog)
+
+    def test_modules_visible_in_help(self):
+        Section('module.import').params(
+            module=Param(Module(), required=True)
+        )
+
+        cfg = get_current_config()
+        parser = argparse.ArgumentParser(description='Test lib')
+        os.environ['sec2.titi.p2'] = '3'
+        with patch('sys.argv', ['pp', '--module.import.module=test_module.with_params']):
+            cfg.augment_argparse(parser)
+
+        self.assertIn('imported_section.blah.p1', parser.epilog)
+        sys.modules.pop('test_module.with_params')
 
 
 if __name__ == '__main__':
