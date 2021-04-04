@@ -238,7 +238,6 @@ Section('optim.alpha').enable_if(labmda cfg: cfg['optim.algorithm'] == 'Adam').p
 )
 ```
 This way users won't see the option `momentum` until they define `optim.algorithm=Adam` and the momentum will not trigger validation error if not filled if another optimizer is chosen.
-```
 
 ## Tests
 
