@@ -6,6 +6,7 @@ import sys
 from os import path
 import json
 import os
+import io
 
 import yaml
 
@@ -219,6 +220,32 @@ class TestSources(unittest.TestCase):
 
         self.assertIn('showsec', parser.epilog)
         self.assertNotIn('hidesec', parser.epilog)
+
+    def test_help_flag_passed(self):
+        Section('a').params(
+            value=Param(int)
+        )
+
+        cfg = get_current_config()
+
+        parser = argparse.ArgumentParser(description='Test lib')
+
+        data = {'called': False}
+
+        def fake_exit(*args, **kwargs):
+            data['called'] = True
+
+        fakeio = io.StringIO("")
+
+        with patch('sys.argv', ['pp', '--help']):
+            with patch('sys.exit', fake_exit):
+                with patch('sys.stdout', fakeio):
+                    cfg.augment_argparse(parser)
+                    self.assertFalse(data['called'])
+                    self.assertIn('a.value', parser.epilog)
+                    cfg.collect_argparse_args(parser)
+                    self.assertTrue(data['called'])
+
 
 
 

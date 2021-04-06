@@ -93,7 +93,7 @@ or from CLI arguments. For CLI just use:
                 epilog += SingleTable(table_content, section_desc).table + "\n\n"
 
             entry_count = len(self.entries)
-            self.collect_argparse_args(parser)
+            self.collect_argparse_args(parser, disable_help=True)
             # If we have more entries in the config we have to regenerate
             # the help with the new settings
             if len(self.entries) == entry_count and epilog == previous_epilog:
@@ -134,8 +134,11 @@ or from CLI arguments. For CLI just use:
 
         return self
 
-    def collect_argparse_args(self, parser):
-        args = parser.parse_args()
+    def collect_argparse_args(self, parser, disable_help=False):
+        cli_args = sys.argv[1:]
+        if disable_help:
+            cli_args = [x for x in cli_args if x != '--help']
+        args = parser.parse_args(cli_args)
         for fname in args.config_file:
             self.collect_config_file(fname)
 
