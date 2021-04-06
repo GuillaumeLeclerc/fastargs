@@ -192,6 +192,19 @@ def compute(param1, param2):
 ```
 ### Advanced features
 
+#### Argparse binary flags
+
+For binary parameters in CLI arguments it is common to simply pass the name of argument with no value. We allow it using the following syntax:
+
+```python
+Section('test').params(
+    p1=Param(bool, is_flag=True)
+)
+```
+
+When collecting values with argparse one should simply use `--test.p1` to set the value to true. Not passing it will be equivalent to passing `False`. Note that this has no impact on other collection sources (python object, config files).
+
+
 #### Modules as arguments
 
 We wanted to give the ability to define parameters of type "Module". These arguments represent paths to an importable python module (eg. `torch.optim`). The goal is to automatically load code based on the arguments provided by the user and pass the module directly to the code that needs it.
