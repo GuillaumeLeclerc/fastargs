@@ -81,6 +81,8 @@ or from CLI arguments. For CLI just use:
                         continue
                     argname = '.'.join(path)
                     # We do not want to show the args since we have our nice table after
+                    if argname == 'help' or argname == 'h':
+                        raise ValueError(f"Argument {argname} is reserved for argparse help")
                     try:
                         parser.add_argument(f'--{argname}', help=argparse.SUPPRESS)
                     except argparse.ArgumentError:
