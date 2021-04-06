@@ -2,11 +2,13 @@ from . import validation
 from .exceptions import MissingValueError, ValidationError
 
 class Param:
-    def __init__(self, checker, desc='', default=None, required=False):
+    def __init__(self, checker, desc='', default=None, required=False,
+                 is_flag=False):
         self.checker = validation.get_checker(checker)
         self.default = default
         self.desc = desc
         self.required = required
+        self.is_flag = is_flag
         self.section = None
 
     def __str__(self):

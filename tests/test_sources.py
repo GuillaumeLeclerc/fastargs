@@ -246,7 +246,21 @@ class TestSources(unittest.TestCase):
                     cfg.collect_argparse_args(parser)
                     self.assertTrue(data['called'])
 
+    def test_flag(self):
+        Section('a').params(
+            a=Param(bool, is_flag=True),
+            b=Param(bool, is_flag=True)
+        )
 
+        cfg = get_current_config()
+
+        parser = argparse.ArgumentParser(description='Test lib')
+        with patch('sys.argv', ['pp', '--a.a']):
+            cfg.augment_argparse(parser)
+            cfg.collect_argparse_args(parser)
+
+        self.assertTrue(cfg['a.a'])
+        self.assertFalse(cfg['a.b'])
 
 
 if __name__ == '__main__':

@@ -84,9 +84,14 @@ or from CLI arguments. For CLI just use:
                     if argname == 'help' or argname == 'h':
                         raise ValueError(f"Argument {argname} is reserved for argparse help")
                     try:
-                        parser.add_argument(f'--{argname}', help=argparse.SUPPRESS)
+                        additional_args = {}
+                        if param.is_flag:
+                            additional_args['action'] = 'store_true'
+                        parser.add_argument(f'--{argname}',
+                                            help=argparse.SUPPRESS,
+                                            **additional_args)
                     except argparse.ArgumentError:
-                        pass # We might have tried to add this one already
+                        pass  # We might have tried to add this one already
                     default = param.default
                     if param.required:
                         default = 'Requried!'
