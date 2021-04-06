@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from fastargs import Config, set_current_config, get_current_config, Section, Param
 from fastargs.validation import (Anything, Str, Int, Float, And, Or, InRange,
-                                 Module, ImportedObject)
+                                 Module, ImportedObject, OneOf)
 from fastargs.exceptions import MissingValueError, ValidationError
 
 sys.path.append(path.dirname(path.realpath(__file__)))
@@ -300,7 +300,28 @@ class TestValidation(unittest.TestCase):
         self.assertFalse(result.a.value2)
         self.assertTrue(result.a.value3)
 
+    def test_oneof(self):
+        p = Param(OneOf(['a', 'b', 3]), required=True)
+        Section('a').params(
+            value=p,
+            value2=p,
+            value3=p
+        )
 
+        cfg = get_current_config()
+
+        cfg.collect({
+            'a.value': 'b',
+            'a.value2': 3,
+            'a.value3': 'c',
+        })
+
+        errors = cfg.validate('errordict')
+
+        self.assertEqual(len(errors), 1)
+        self.assertIn(('a', 'value3'), errors.keys())
+
+        self.assertIn('3', str(p))
 
 
 if __name__ == '__main__':

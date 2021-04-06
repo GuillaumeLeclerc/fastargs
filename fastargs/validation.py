@@ -93,7 +93,7 @@ class And(Checker):
 
 class InRange(Checker):
 
-    def __init__(self, min, max=float('+inf')):
+    def __init__(self, min=float('-inf'), max=float('+inf')):
         self.low = min
         self.high = max
 
@@ -103,8 +103,20 @@ class InRange(Checker):
         return value
 
     def help(self):
-
         return f"between {self.low} and {self.high}"
+
+class OneOf(Checker):
+
+    def __init__(self, possible_values):
+        self.possible_values = set(possible_values)
+
+    def check(self, value):
+        if value not in self.possible_values:
+            raise ValueError()
+        return value
+
+    def help(self):
+        return f"One of [{', '.join([str(x) for x in self.possible_values])}]"
 
 class Module(Checker):
 
