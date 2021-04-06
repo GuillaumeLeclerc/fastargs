@@ -28,6 +28,13 @@ class Int(Checker):
     def help(self):
         return "an int"
 
+class Bool(Checker):
+    def check(self, value):
+        return bool(value)
+
+    def help(self):
+        return "a boolean"
+
 
 class Float(Checker):
     def check(self, value):
@@ -129,6 +136,7 @@ class ImportedObject(Checker):
 DEFAULT_CHECKERS = {
     int: Int(),
     float: Float(),
-    str: Str()
+    str: Str(),
+    bool: Bool()
 }
 

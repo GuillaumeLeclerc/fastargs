@@ -281,5 +281,27 @@ class TestValidation(unittest.TestCase):
         self.assertIn(('b', 'value'), errors)
         self.assertNotIn(('c', 'value'), errors)
 
+    def test_bool(self):
+        Section('a').params(
+            value=Param(bool, required=True),
+            value2=Param(bool, required=True),
+            value3=Param(bool, required=True)
+        )
+
+        cfg = get_current_config().collect({
+            'a.value': '19',
+            'a.value2': False,
+            'a.value3': 'hoho'
+        })
+
+        result = cfg.get()
+
+        self.assertTrue(result.a.value)
+        self.assertFalse(result.a.value2)
+        self.assertTrue(result.a.value3)
+
+
+
+
 if __name__ == '__main__':
     unittest.main()
