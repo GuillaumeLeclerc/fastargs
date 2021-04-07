@@ -262,6 +262,33 @@ class TestSources(unittest.TestCase):
         self.assertTrue(cfg['a.a'])
         self.assertFalse(cfg['a.b'])
 
+    def test_duplicate_sections(self):
+        Section('a').params(
+            a=Param(int)
+        )
+        Section('b').params(
+            b=Param(int)
+        )
+
+        cfg = get_current_config()
+        parser = argparse.ArgumentParser(description='Test lib')
+
+        def fake_exit(*args, **kwargs):
+            pass
+
+        fakeio = io.StringIO("")
+
+        with patch('sys.argv', ['pp', '--help']):
+            with patch('sys.exit', fake_exit):
+                with patch('sys.stdout', fakeio):
+                    cfg.augment_argparse(parser)
+                    cfg.collect_argparse_args(parser)
+
+        output = fakeio.getvalue()
+
+        self.assertEqual(output.count('a.a'), 1)
+        self.assertEqual(output.count('b.b'), 1)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -73,8 +73,8 @@ or from CLI arguments. For CLI just use:
         previous_epilog = ""
         while True:
             epilog = ""
-            table_content = [['Name', 'Default', 'Constraint', 'Description']]
             for sec_path, entries in self.sections_to_entries.items():
+                table_content = [['Name', 'Default', 'Constraint', 'Description']]
                 for path in entries:
                     param = self.entries[path]
                     if not param.section.is_enabled(self):
