@@ -125,6 +125,13 @@ class TestDecorators(unittest.TestCase):
 
         self.assertEqual(compute(), 111)
 
+    def test_do_not_complain_not_missing_args(self):
+        @param('sec1.p1')
+        def compute(p1):
+            return p1
+
+        self.assertEqual(compute(p1=17), 17)
+
 
 if __name__ == '__main__':
     unittest.main()
