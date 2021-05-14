@@ -40,20 +40,31 @@ named parameter to resolve it""") from None
             else:
                 raise e
 
-
+def extract_function(func):
+    if hasattr(func, '__fastarg_wrapper'):
+        return getattr(func, '__fastarg_wrapper')
+    else:
+        return WrappedFunction(func)
 
 def param(parameter, alias=None):
     if isinstance(parameter, str):
         parameter = tuple(parameter.split('.'))
 
-    if alias==None:
+    if alias is None:
         alias = parameter[-1]
 
     def wrapper(func):
-        if not isinstance(func, WrappedFunction):
-            func = WrappedFunction(func)
+
+        func = extract_function(func)
+
         func.add_arg(parameter, alias)
-        return func
+
+        def result(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        setattr(result, '__fastarg_wrapper', func)
+        return result
+
     return wrapper
 
 def section(section):
@@ -61,8 +72,7 @@ def section(section):
         section = tuple(section.split('.'))
 
     def wrapper(func):
-        if not isinstance(func, WrappedFunction):
-            func = WrappedFunction(func)
+        func = extract_function(func)
         func.set_section(section)
         return func
     return wrapper
