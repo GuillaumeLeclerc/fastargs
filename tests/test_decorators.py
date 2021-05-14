@@ -125,6 +125,24 @@ class TestDecorators(unittest.TestCase):
 
         self.assertEqual(compute(), 111)
 
+    def test_class_constructor(self):
+        Section('sec1').params(
+            p1=Param(int),
+        )
+
+        class TestClass:
+
+            @param('sec1.p1', 'value')
+            def __init__(self, value):
+                self.value = value
+
+        get_current_config().collect({
+            'sec1.p1': 42,
+        })
+
+        self.assertEqual(TestClass().value, 42)
+
+
     def test_do_not_complain_not_missing_args(self):
         @param('sec1.p1')
         def compute(p1):
