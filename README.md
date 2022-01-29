@@ -244,7 +244,7 @@ Section('optim').params(
   algorithm=Param(str)
 )
 
-Section('optim.alpha').enable_if(labmda cfg: cfg['optim.algorithm'] == 'Adam').params(
+Section('optim.alpha').enable_if(lambda cfg: cfg['optim.algorithm'] == 'Adam').params(
   'momentum': Param(float, required=True),
   'alpha': Param(float, default=1.0),
   'beta': Param(float, default=1.0)
