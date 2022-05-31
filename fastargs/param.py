@@ -37,5 +37,6 @@ class Param:
         try:
             return self.checker.check(value)
         except Exception:
-            raise ValidationError()
+            msg = f'value `{value}` does not fit checker for `{self.checker.help()}`'
+            raise ValidationError(msg)
 

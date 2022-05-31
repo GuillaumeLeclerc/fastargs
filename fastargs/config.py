@@ -180,7 +180,11 @@ or from CLI arguments. For CLI just use:
         if value is None and not param.required:
             return value
 
-        return param.validate(value)
+        try:
+            return param.validate(value)
+        except TypeError as e:
+            print(f'Issue when typechecking path {path}! Error below:')
+            raise e
 
 
     def get(self):

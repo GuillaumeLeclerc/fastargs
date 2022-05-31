@@ -25,7 +25,9 @@ class WrappedFunction:
                 path = ns + path
             if alias in kwargs:  # User overrode this argument
                 continue
+
             value = config[path]
+
             if value is not None:
                 filled_args[alias] = value
 
