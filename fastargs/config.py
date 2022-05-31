@@ -3,6 +3,7 @@ from collections import defaultdict
 import json
 import sys
 import os
+from xml.dom import ValidationErr
 
 from terminaltables import SingleTable
 
@@ -182,8 +183,8 @@ or from CLI arguments. For CLI just use:
 
         try:
             return param.validate(value)
-        except TypeError as e:
-            print(f'Issue when typechecking path {path}! Error below:')
+        except ValidationError as e:
+            print(f'Issue when typechecking argument psyh `{".".join(path)}`:')
             raise e
 
 

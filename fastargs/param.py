@@ -12,7 +12,6 @@ class Param:
         self.section = None
 
     def __str__(self):
-
         result = ""
 
         if self.required:
