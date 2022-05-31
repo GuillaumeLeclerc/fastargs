@@ -3,7 +3,6 @@ from collections import defaultdict
 import json
 import sys
 import os
-from xml.dom import ValidationErr
 
 from terminaltables import SingleTable
 
