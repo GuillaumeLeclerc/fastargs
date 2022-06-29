@@ -180,7 +180,11 @@ or from CLI arguments. For CLI just use:
         if value is None and not param.required:
             return value
 
-        return param.validate(value)
+        try:
+            return param.validate(value)
+        except ValidationError as e:
+            print(f'Issue when typechecking argument psyh `{".".join(path)}`:')
+            raise e
 
 
     def get(self):
