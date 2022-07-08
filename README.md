@@ -16,7 +16,7 @@ Simple full example available: https://github.com/GuillaumeLeclerc/fastargs/blob
 
 ### Declare the arguments
 
-As demonstrated here you can declare your parameters in multiple files over your project. To make your code more readable it is recommended to declare the parameters as close as from where they are used.
+As demonstrated here you can declare your parameters in multiple files over your project. To make your code more readable it is recommended to declare the parameters as close as possible to their use.
 
 In `train.py`:
 ```python
@@ -103,7 +103,7 @@ config.collect_argparse_args(parser)
 # It will:
 # - Add a CLI argument for each fastargs argument
 # - Generate a user friendly --help message
-# - Allow the user to pass config files through CLI arguments and collect them aumatically for you
+# - Allow the user to pass config files through CLI arguments and collect them automatically for you
 # - collect env variables
 #
 # Priority for duplicated parameters is: env variable, cli argument, config files from last to first
@@ -143,7 +143,7 @@ config.summary()
 
 ### Accessing arguments
 
-#### Option 1: Explicitely
+#### Option 1: Explicitly
 
 ```python
 # One can read individual arguments
@@ -157,7 +157,7 @@ print(arguments.training.optimizer.learning_rate)
 
 #### Option 2: Through decorators
 
-It is possible to automatically feed arguments to functions without having to explicitely use the API of `fastargs`.
+It is possible to automatically feed arguments to functions without having to explicitly use the API of `fastargs`.
 
 
 ```python
@@ -179,10 +179,10 @@ def train_my_model(model, learning_rate, momentum):
 # Note that if one does:
 train_my_model(model, learning_rate=10)
 # the learning from the config will be ignored
-# (but momentum will be since it wasn't explicitely overriden)
+# (but momentum will be since it wasn't explicitly overriden)
 ```
 
-By default the parameter will be passed to the argument with name the last component of the path (eg. `a.b.c` -> `c`). However, it is possible that multiple parameter section share some parameter names. It is therefore possible to explicitely chose the name of the argument:
+By default the parameter will be passed to the argument with name the last component of the path (eg. `a.b.c` -> `c`). However, it is possible that multiple parameter sections share some parameter names. It is therefore possible to explicitely chose the name of the argument:
 
 ```python
 @param('a.b.c', 'param1')
@@ -233,11 +233,11 @@ loaded_module.testme()
 print(cfg['imported_section.blah.p1'])  # => 42.5
 ```
 
-If we need to get a variable/function/class, we can use the import type `ImportedObject`. In the the case of the previous example, the user would have to pass `test_module.with_params.testme`, and the value in the configuration object would be the function itself and not the whole module.
+If we need to get a variable/function/class, we can use the import type `ImportedObject`. In the case of the previous example, the user would have to pass `test_module.with_params.testme`, and the value in the configuration object would be the function itself and not the whole module.
 
 #### Conditional sections
 
-It is pretty common to have parameters that only makes sense if another parameter is defined and/or has a specific value. For example, in the context of optimization, stochastic gradient descent only has one parameter `learning_rate`. But if we use `Adam` we have extra parameters. In this situation one can do the following:
+It is pretty common to have parameters which only make sense if another parameter is defined and/or has a specific value. For example, in the context of optimization, stochastic gradient descent only has one parameter `learning_rate`. But if we use `Adam` we have extra parameters. In this situation one can do the following:
 
 ```python
 Section('optim').params(
@@ -250,7 +250,7 @@ Section('optim.alpha').enable_if(lambda cfg: cfg['optim.algorithm'] == 'Adam').p
   'beta': Param(float, default=1.0)
 )
 ```
-This way users won't see the option `momentum` until they define `optim.algorithm=Adam` and the momentum will not trigger validation error if not filled if another optimizer is chosen.
+This way users won't see the option `momentum` until they define `optim.algorithm=Adam` and failing to fill it will not trigger a validation error if another optimizer is chosen.
 
 ## Tests
 
