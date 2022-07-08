@@ -23,7 +23,7 @@ setup(
 	# repository. For example: MIT 
 	license='MIT',
 	# Short description of your library 
-	description='Python library for argument and configuration management ',
+	description='Python library for argument and configuration management',
 	# Long description of your library 
 	long_description=long_description,
 	long_description_content_type='text/markdown',
@@ -38,7 +38,10 @@ setup(
 	# List of keywords 
 	keywords=['parameters', 'configuration', 'decorators'],
 	# List of packages to install with this one 
-	install_requires=[],
+	install_requires=[
+		'pyyaml',
+		'terminaltables'
+	],
 	# https://pypi.org/classifiers/ 
 	classifiers=['Development Status :: 5 - Production/Stable', 'Environment :: Console']
 )
