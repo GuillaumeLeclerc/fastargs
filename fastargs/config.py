@@ -21,6 +21,7 @@ class Config:
         self.entries = {}
         self.content = {}
 
+
     def add_section(self, section):
         self.sections[section.ns] = section
 
@@ -239,3 +240,14 @@ or from CLI arguments. For CLI just use:
 
         return self
 
+    def as_dict(self):
+        """ Stores config in a dict, like 'section.parameter' -> value """
+        output = {}
+        for path in self.entries.keys():
+            try:
+                value = self[path]
+                if value is not None:
+                    output['.'.join(path)] =  self[path]
+            except:
+                pass
+        return output

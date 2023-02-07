@@ -114,6 +114,24 @@ class TestStringMethods(unittest.TestCase):
         self.assertIn('3', output)
         self.assertNotIn('first.sec.param3', output)
 
+    def test_as_dict(self):
+        Section('first_sec', 'test_sec1').params(
+            param1=Param(Anything(), required=True),
+            param2=Param(Anything(), default='3'),
+            param3=Param(Anything(), required=False)
+        )
+
+        cfg = get_current_config().collect({
+            'first_sec.param1': 42
+            })
+
+        output_dict = cfg.as_dict()
+        target = {'first_sec.param1': 42,
+                  'first_sec.param2': '3'}
+
+        self.assertDictEqual(output_dict, target)
+
+
     def test_conditional_arguments(self):
         Section('a').params(
             value=Param(int)
